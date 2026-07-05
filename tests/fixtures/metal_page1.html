@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>���援�鍮�泥�湲���������� ��듦�����蹂�&gt;LME������</title>
+<!--[if lt IE 9]>
+<script src="/bbs/common/js/html5.min.js"></script>
+<![endif]-->
+<!--[if lt IE 9]><script src="/bbs/common/js/jquery-1.x.min.js"></script>
+<![endif]--><!--[if gte IE 9]><!--><script src="/bbs/common/js/jquery.min.js"></script>
+<!--<![endif]-->
+</head>
+<body>
+<link rel="stylesheet" href="/css/button.css?ver=20150204">
+
+<link rel="stylesheet" href="/bbs/common/css/default.css?ver=20150204">
+<link rel="stylesheet" href="/css/common.css?ver=20150204">
+<link rel="stylesheet" href="/css/sub.css?ver=20150204">
+<div id="wrap">
+	<script>
+
+	$(function() {
+	
+		var curHeight = $('.gnb_txt').height();
+		var paddingBottomOver = 100;
+		var totalHeight;
+	
+		$('.gnb_v2').mouseover(function() {
+			$('.gnb_txt_sub').css({'display':'block'});
+		});
+	
+		$('.gnb_v2>li').mouseover(function() {
+			$(this).children('ul').addClass('on');
+			totalHeight = 379
+			$('.gnb_txt').addClass("line");
+			$('.gnb_txt').stop().animate({height:totalHeight},379);
+		});
+		
+		$('.gnb_v2>li').mouseout(function() {
+			$(this).children('ul').removeClass('on');
+			$('.gnb_txt').stop().animate({height:curHeight},379, function(){
+				$('.gnb_txt').removeClass("line");
+			});
+		});
+
+		$('.gnb_v2>li>a').focus(function() {
+			$('.gnb_txt_sub').css({'z-index':'910' , 'display':'none'});
+				totalHeight = 379;
+				$('.gnb_txt').addClass("line");
+			$('.gnb_txt').stop().animate({height:totalHeight},379);
+		});
+	
+		$('.gnb_v2 a').filter(':last').blur(function() {
+			$('.gnb_txt').stop().animate({height:curHeight},379, function(){
+				$('.gnb_txt').removeClass("line");
+			});
+		});
+
+		$('#topSearch').submit(function(){
+
+			if ($('input[name=search_keyword]').val() == ''){
+				alert('寃������⑥�대�� �����ν����몄��.');
+				$('#search_keyword').focus();
+				return false;
+			}
+
+		});
+		
+		$("#site1").change(function(){
+			if ($(this).val() != ""){
+				window.open($(this).val(), $(this).val()); 
+			}
+		});
+
+	});
+
+</script>
+<header>
+	<div class="wrap">
+		<h1><a href="/" title="�����쇰�� ��대��"><img src="../images/comm/logo.gif" alt="���援�鍮�泥�湲���������� 濡�怨�" ></a></h1>
+		<ul class="mini_menu">			
+
+			<li><a href="/bbs/?act=member&subAct=login">濡�洹몄��</a></li>
+			<li><a href="/bbs/?act=member">������媛����</a></li>
+			<li><a href="/bbs/?act=member&subAct=account">�����대��/鍮�諛�踰���몄갼湲�</a></li>
+
+		</ul>
+	</div>
+	<div class="gnb_txt">
+		<div class="wrap_v2">
+			<ul class="gnb_v2">
+				<li><a href="/about/" class="menu1">���������媛�</a>
+					<ul>
+					 <li><a href="/about/?act=sub1">��몄�щ��</a></li>
+					 <li><a href="/about/?act=sub2">��고��</a></li>
+					 <li><a href="/about/?act=sub3">議곗�����</a></li>
+					 <li><a href="/about/?act=sub4">二쇱�����臾�</a></li>
+					 <li><a href="/about/?act=sub5">李얠����ㅼ����� 湲�</a></li>
+					</ul>
+				</li>
+				<li><a href="/bbs/?bid=stats" class="menu2">��듦�����蹂�</a>
+					<ul>
+					 <li><a href="/bbs/?bid=stats">鍮�泥���듦��</a></li>
+					 <li><a href="/bbs/?bid=price">媛�寃⑹��蹂�</a></li>
+					 <li><a href="/stats/?act=sub3">LME������</a></li>
+					</ul>
+				</li>
+				<li><a href="/company/" class="menu3">���������</a>
+					<ul>
+					 <li><a href="/company/?act=sub1">��������ы�����</a></li>
+					 <li><a href="/company/?act=sub2">�����곗�����</a></li>
+					 <li><a href="/company/?act=sub3">������媛����������</a></li>
+					</ul>
+				</li>
+				<li><a href="/bbs/?bid=notice" class="menu4">鍮�泥�������</a>
+					<ul>
+					 <li><a href="/bbs/?bid=notice">怨듭����ы��</a></li>
+					 <li><a href="/bbs/?bid=trend">���怨�������</a></li>
+					 <li><a href="/bbs/?bid=photo">��ы����댁��</a></li>
+					</ul>
+				</li>
+				<li><a href="/bbs/?bid=data" class="menu5">���猷�留����</a>
+					<ul>
+					 <li><a href="/bbs/?bid=data">���猷����</a></li>
+					 <li><a href="/bbs/?bid=law">���梨����蹂�</a></li>
+					 <!--
+					 <li><a href="/bbs/?bid=climate">湲고��蹂����</a></li>
+					 -->
+					 <li><a href="/data/?act=sub4">二쇱��留����</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+</header>
+	<section>
+		<div id="container">
+			<nav>
+				<h2 class="title2">��듦�����蹂�</h2>
+				<ul>
+					<li><a href="/bbs/?bid=stats">鍮�泥���듦��</a></li>
+					<li><a href="/bbs/?bid=price">媛�寃⑹��蹂�</a></li>
+					<li class="on"><a href="/stats/?act=sub3">LME������</a></li>
+				</ul>
+			</nav>
+			<div id="content">
+				<div class="page_navigation">
+					<p>
+
+					&gt; ��듦�����蹂�
+					&gt; LME������
+					</p>
+				</div>
+				<h3>LME������</h3>
+<div class="sub_page">
+	<p class="fr">���臾� US$/���</p>
+	<br>
+	<div class="tableStyle01">
+    <table summary="��� �����대����� LME������ ���蹂대�� ���怨듯�⑸�����.">
+    <caption>LME������</caption>
+    <colgroup>
+      <col width="16%"><col width="14%"><col width="14%"><col width="14%"><col width="14%"><col width="14%"><col width="14%">
+    </colgroup>
+      <tbody>
+      <tr>
+				<th rowspan="2" scope="col">��쇱��</th>
+				<th colspan="6" scope="col">���紐�</th>
+			</tr>
+			<tr>
+				<th>Cu</th>
+				<th>Al</th>
+				<th>Zn</th>
+				<th>Pb</th>
+				<th>Ni</th>
+				<th>Sn</th>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 07. 02</td>
+				<td>13,202.0</td>
+				<td>3,061.5</td>
+				<td>3,475.0</td>
+				<td>1,828.5</td>
+				<td>16,070.0</td>
+				<td>51,200.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 07. 01</td>
+				<td>13,170.0</td>
+				<td>3,075.0</td>
+				<td>3,529.0</td>
+				<td>1,840.0</td>
+				<td>16,175.0</td>
+				<td>51,150.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 30</td>
+				<td>13,341.0</td>
+				<td>3,105.5</td>
+				<td>3,565.5</td>
+				<td>1,845.0</td>
+				<td>16,275.0</td>
+				<td>51,100.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 29</td>
+				<td>13,302.5</td>
+				<td>3,160.5</td>
+				<td>3,491.0</td>
+				<td>1,871.5</td>
+				<td>16,455.0</td>
+				<td>51,000.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 26</td>
+				<td>13,287.0</td>
+				<td>3,164.0</td>
+				<td>3,460.0</td>
+				<td>1,880.0</td>
+				<td>16,570.0</td>
+				<td>50,325.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 25</td>
+				<td>13,194.0</td>
+				<td>3,132.0</td>
+				<td>3,432.0</td>
+				<td>1,894.0</td>
+				<td>16,660.0</td>
+				<td>50,100.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 24</td>
+				<td>13,181.5</td>
+				<td>3,150.0</td>
+				<td>3,437.0</td>
+				<td>1,896.0</td>
+				<td>16,610.0</td>
+				<td>49,550.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 23</td>
+				<td>13,334.0</td>
+				<td>3,263.5</td>
+				<td>3,503.0</td>
+				<td>1,910.0</td>
+				<td>17,105.0</td>
+				<td>51,900.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 22</td>
+				<td>13,642.0</td>
+				<td>3,405.0</td>
+				<td>3,612.5</td>
+				<td>1,928.5</td>
+				<td>17,640.0</td>
+				<td>54,995.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 19</td>
+				<td>13,530.5</td>
+				<td>3,400.0</td>
+				<td>3,584.5</td>
+				<td>1,935.0</td>
+				<td>17,590.0</td>
+				<td>53,200.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 18</td>
+				<td>13,612.0</td>
+				<td>3,402.0</td>
+				<td>3,565.0</td>
+				<td>1,945.0</td>
+				<td>17,770.0</td>
+				<td>53,455.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 17</td>
+				<td>13,736.0</td>
+				<td>3,405.5</td>
+				<td>3,592.0</td>
+				<td>1,945.0</td>
+				<td>17,820.0</td>
+				<td>55,400.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 16</td>
+				<td>13,682.0</td>
+				<td>3,359.0</td>
+				<td>3,550.0</td>
+				<td>1,956.0</td>
+				<td>17,630.0</td>
+				<td>55,150.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 15</td>
+				<td>13,714.0</td>
+				<td>3,419.5</td>
+				<td>3,562.0</td>
+				<td>1,964.0</td>
+				<td>17,810.0</td>
+				<td>54,650.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 12</td>
+				<td>13,603.0</td>
+				<td>3,536.0</td>
+				<td>3,557.0</td>
+				<td>1,957.0</td>
+				<td>17,630.0</td>
+				<td>53,350.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 11</td>
+				<td>13,420.0</td>
+				<td>3,498.5</td>
+				<td>3,468.0</td>
+				<td>1,967.0</td>
+				<td>17,440.0</td>
+				<td>52,395.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 10</td>
+				<td>13,370.0</td>
+				<td>3,489.0</td>
+				<td>3,486.0</td>
+				<td>1,974.5</td>
+				<td>17,380.0</td>
+				<td>51,750.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 09</td>
+				<td>13,716.0</td>
+				<td>3,608.0</td>
+				<td>3,576.0</td>
+				<td>1,983.0</td>
+				<td>17,930.0</td>
+				<td>53,060.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 08</td>
+				<td>13,661.0</td>
+				<td>3,669.5</td>
+				<td>3,519.0</td>
+				<td>1,990.0</td>
+				<td>18,340.0</td>
+				<td>51,850.0</td>
+			</tr>
+
+			<tr>
+				<td class="sp">2026. 06. 05</td>
+				<td>13,731.0</td>
+				<td>3,736.0</td>
+				<td>3,575.0</td>
+				<td>2,003.0</td>
+				<td>18,545.0</td>
+				<td>54,000.0</td>
+			</tr>
+
+			</tbody>
+    </table>
+		<a href="/action/?subAct=lme_excel&page=1"><img src="../images/comm/btn_excel.gif" alt="������������" class="fr mt20"></a>
+  </div>
+<div class="paging">
+
+				<span class="btn"><a href="#first" class="first">紐⑸�� 泥������쇰�� ��대��</a></span>
+				<span class="btn"><a href="#prev" class="prev">��댁�� �����댁��濡� ��대��</a></span>
+
+				<span class="num">
+
+				<strong class="on">1</strong>
+
+				<a href="?act=sub3&page=2">2</a>
+
+				<a href="?act=sub3&page=3">3</a>
+
+				<a href="?act=sub3&page=4">4</a>
+
+				<a href="?act=sub3&page=5">5</a>
+
+				<a href="?act=sub3&page=6">6</a>
+
+				<a href="?act=sub3&page=7">7</a>
+
+				<a href="?act=sub3&page=8">8</a>
+
+				<a href="?act=sub3&page=9">9</a>
+
+				<a href="?act=sub3&page=10">10</a>
+
+				</span>
+
+			<span class="btn"><a href="?act=sub3&page=11" class="next">��ㅼ�� �����댁��濡� ��대��</a></span>
+			<span class="btn"><a href="?act=sub3&page=293" class="last">紐⑸�� 留�吏�留���쇰�� ��대��</a></span>
+
+	</div>
+</div>
+			</div>
+		</div>
+		</section>
+	</div>
+<footer>
+	<div class="bottom">
+		<p class="addr">���援�鍮�泥�湲����������(Korea Nonferrous Metal Association)<br>
+		�����몄�� 媛���④뎄 �����쇰��3湲� 11 (愿���깅����� 蹂멸�� 701���) ������ : 02-567-2313 ��⑹�� : 02-558-4180<br>
+		Copyright���2018 ���援�鍮�泥�湲����������. All Rights Reserved.<br>
+		<a href="https://gongam.co.kr/link" target="_blank">Design by <strong><u>怨듦�����������</u></strong></a></p>
+		<ul class="b_menu">
+			<li><a href="/member/?act=sub1"><strong>媛���몄��蹂댁��由щ갑移�</strong></a></li>
+			<li><a href="/about/?act=sub5">李얠����ㅼ�����湲�</a></li>
+		</ul>
+		<select id="site1" class="cp">
+			<option value="">愿���⑥�ъ�댄�� 諛�濡�媛�湲�</option>
+			<option value="http://motie.go.kr">��곗����듭��������遺�</option>
+			<option value="http://me.go.kr">���寃쎈��</option>
+			<option value="https://www.kores.or.kr">���援�愿�臾쇱�����怨듭��</option>
+			<option value="http://www.kosa.or.kr">���援�泥�媛�������</option>
+			<option value="http://www.cu-kcic.or.kr">���援����怨듭��������議고��</option>
+		</select>
+	</div>
+</footer></body>
+</html>
