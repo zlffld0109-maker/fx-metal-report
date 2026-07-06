@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     FX_PAIRS: list[str] = ["USD", "EUR", "JPY", "CNY"]
     METALS: list[str] = ["Cu", "Al", "Zn", "Pb", "Ni", "Sn"]
-    METAL_PAGES: int = 14  # 최근 4개 분기(약 1년) 평균 비교에 충분한 과거 데이터 확보용
+    METAL_PAGES: int = 22  # 최근 4개 분기 + 전년(1년 전체) 평균 비교에 충분한 과거 데이터 확보용
 
     SMTP_HOST: str | None = None
     SMTP_PORT: int = 465

@@ -44,8 +44,34 @@ def build_fx_narrative(fx_trends: dict) -> list[str]:
     return [lead, detail]
 
 
+_FOCUS_METALS = ("Cu", "Al")
+
+
+def _metal_detail_sentence(key: str, t: dict) -> str:
+    label = METAL_LABELS.get(key, key)
+    quarters = t.get("quarters") or []
+    cur_q = quarters[0] if quarters else None
+    q_part = (
+        f", 당분기 평균 대비 {_fmt_pct(cur_q['vs_pct'])}"
+        if cur_q and cur_q.get("vs_pct") is not None
+        else ""
+    )
+    year_part = ""
+    if t.get("vs_year_avg_pct") is not None:
+        year_part = f", {t.get('prev_year')}년 평균 대비 {_fmt_pct(t['vs_year_avg_pct'])}"
+    return (
+        f"{label}은(는) 전일대비 {_fmt_pct(t.get('change_1d_pct'))}, "
+        f"당월 평균 대비 {_fmt_pct(t.get('vs_month_avg_pct'))}{q_part}{year_part}로 "
+        f"{t.get('label', '판정불가')} 흐름입니다."
+    )
+
+
 def build_metal_narrative(metal_trends: dict) -> list[str]:
-    """비철금속 트렌드 딕셔너리로부터 간단한 시장 코멘트 문단(2개)을 생성한다."""
+    """비철금속 트렌드 딕셔너리로부터 시장 코멘트 문단을 생성한다.
+
+    창성에이스산업이 실제로 관심 있는 금속은 구리(Cu)·알루미늄(Al)이므로,
+    전체 동향 요약 한 줄 뒤에는 두 금속을 중점적으로 상세 서술한다.
+    """
     if not metal_trends:
         return []
 
@@ -55,28 +81,12 @@ def build_metal_narrative(metal_trends: dict) -> list[str]:
     phrase = _direction_phrase(len(up), len(down), total)
     lead = f"LME 비철금속은 {phrase}를 나타냈습니다."
 
-    def _current_quarter_vs_pct(item):
-        _, t = item
-        quarters = t.get("quarters") or []
-        if not quarters or quarters[0]["vs_pct"] is None:
-            return 0.0
-        return quarters[0]["vs_pct"]
-
-    scored = [item for item in metal_trends.items() if item[1].get("quarters")]
-    if not scored:
-        return [lead]
-
-    strongest = max(scored, key=_current_quarter_vs_pct)
-    weakest = min(scored, key=_current_quarter_vs_pct)
-
-    s_key, s_t = strongest
-    w_key, w_t = weakest
-    detail = (
-        f"{METAL_LABELS.get(s_key, s_key)}은(는) 당분기 평균 대비 {_fmt_pct(s_t['quarters'][0]['vs_pct'])}로 "
-        f"{total}개 금속 중 가장 강한 흐름을, {METAL_LABELS.get(w_key, w_key)}은(는) "
-        f"{_fmt_pct(w_t['quarters'][0]['vs_pct'])}로 가장 약한 흐름을 보였습니다."
-    )
-    return [lead, detail]
+    paragraphs = [lead]
+    for key in _FOCUS_METALS:
+        t = metal_trends.get(key)
+        if t is not None:
+            paragraphs.append(_metal_detail_sentence(key, t))
+    return paragraphs
 
 
 def build_outlook(fx_trends: dict, metal_trends: dict) -> list[str]:
@@ -100,16 +110,23 @@ def build_outlook(fx_trends: dict, metal_trends: dict) -> list[str]:
         else:
             bullets.append("달러/원은 뚜렷한 방향성 없이 등락하고 있어 추세 전환 신호를 좀 더 지켜볼 필요가 있습니다.")
 
-    for key, t in metal_trends.items():
+    # 창성에이스산업 관심 금속(구리·알루미늄)을 중점적으로 전망에 반영한다.
+    for key in _FOCUS_METALS:
+        t = metal_trends.get(key)
+        if t is None:
+            continue
         quarters = t.get("quarters") or []
         valid = [q for q in quarters if q["avg"] is not None]
-        if len(valid) < 2:
-            continue
-        above = sum(1 for q in valid if (q["vs_pct"] or 0) > 0)
         label = METAL_LABELS.get(key, key)
-        if above == len(valid):
-            bullets.append(f"{label}은(는) 비교 가능한 분기 평균을 모두 상회하고 있어 중기 상승 모멘텀이 우세합니다.")
-        elif above == 0:
-            bullets.append(f"{label}은(는) 비교 가능한 분기 평균을 모두 하회하고 있어 중기 하락 압력이 이어지고 있습니다.")
+        if len(valid) >= 2:
+            above = sum(1 for q in valid if (q["vs_pct"] or 0) > 0)
+            if above == len(valid):
+                bullets.append(f"{label}은(는) 비교 가능한 분기 평균을 모두 상회하고 있어 중기 상승 모멘텀이 우세합니다.")
+            elif above == 0:
+                bullets.append(f"{label}은(는) 비교 가능한 분기 평균을 모두 하회하고 있어 중기 하락 압력이 이어지고 있습니다.")
+        year_pct = t.get("vs_year_avg_pct")
+        if year_pct is not None and abs(year_pct) >= 10:
+            side = "크게 상회" if year_pct > 0 else "크게 하회"
+            bullets.append(f"{label}은(는) {t.get('prev_year')}년 평균 대비 {_fmt_pct(year_pct)}로 {side}하고 있어 연간 기준 가격 레벨 변화에 유의할 필요가 있습니다.")
 
     return bullets

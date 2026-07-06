@@ -29,6 +29,9 @@ _SAMPLE_METAL_TREND = {
         {"label": "2026Q1", "avg": None, "vs_pct": None},
         {"label": "2025Q4", "avg": None, "vs_pct": None},
     ],
+    "prev_year": 2025,
+    "year_avg": 12000.0,
+    "vs_year_avg_pct": 10.02,
     "label": "보합",
 }
 
@@ -76,6 +79,23 @@ def test_render_markdown_includes_per_quarter_columns():
     assert "2026Q2 평균대비" in md
     assert "2025Q4 평균대비" in md
     assert "당월평균대비" in md
+    assert "2025년 평균대비" in md
+
+
+def test_render_markdown_bolds_focus_metals():
+    md = render_markdown(_sample_report())
+    assert "**구리(Cu)**" in md
+    assert "**알루미늄(Al)**" in md
+    assert "**아연(Zn)**" not in md
+
+
+def test_render_email_html_highlights_focus_metals_and_avoids_char_wrap():
+    html = render_email_html(_sample_report())
+    # 라벨 셀에 white-space:nowrap이 없으면 좁은 컬럼에서 한글이 글자 단위로 줄바꿈된다.
+    assert "white-space:nowrap" in html
+    assert "★ 구리(Cu)" in html
+    assert "★ 알루미늄(Al)" in html
+    assert "아연(Zn)" in html and "★ 아연(Zn)" not in html
 
 
 def test_render_markdown_includes_narrative_and_outlook():

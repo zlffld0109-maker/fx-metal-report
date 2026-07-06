@@ -27,6 +27,9 @@ def classify_metal_trend(dates: pd.Series, values: pd.Series, num_quarters: int 
             "month_avg": None,
             "vs_month_avg_pct": None,
             "quarters": [],
+            "prev_year": None,
+            "year_avg": None,
+            "vs_year_avg_pct": None,
             "label": "판정불가",
         }
 
@@ -42,6 +45,11 @@ def classify_metal_trend(dates: pd.Series, values: pd.Series, num_quarters: int 
     month_mask = (dates.dt.year == latest_date.year) & (dates.dt.month == latest_date.month)
     month_avg = float(values[month_mask].mean()) if month_mask.any() else None
     vs_month_avg_pct = (latest - month_avg) / month_avg * 100 if month_avg else None
+
+    prev_year = latest_date.year - 1
+    year_mask = dates.dt.year == prev_year
+    year_avg = float(values[year_mask].mean()) if year_mask.any() else None
+    vs_year_avg_pct = (latest - year_avg) / year_avg * 100 if year_avg else None
 
     current_quarter = (latest_date.month - 1) // 3 + 1
     quarter_keys = _prior_quarter_keys(latest_date.year, current_quarter, num_quarters)
@@ -79,6 +87,9 @@ def classify_metal_trend(dates: pd.Series, values: pd.Series, num_quarters: int 
         "month_avg": month_avg,
         "vs_month_avg_pct": vs_month_avg_pct,
         "quarters": quarters,
+        "prev_year": prev_year,
+        "year_avg": year_avg,
+        "vs_year_avg_pct": vs_year_avg_pct,
         "label": label,
     }
 

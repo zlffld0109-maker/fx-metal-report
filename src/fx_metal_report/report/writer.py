@@ -45,14 +45,27 @@ def _metal_quarter_labels(trends: dict) -> list[str]:
     return [q["label"] for q in first.get("quarters", [])]
 
 
+_FOCUS_METALS = {"Cu", "Al"}
+
+
+def _metal_prev_year_label(trends: dict) -> str:
+    first = next(iter(trends.values()), {})
+    prev_year = first.get("prev_year")
+    return f"{prev_year}년" if prev_year else "전년"
+
+
 def _metal_table_rows(trends: dict) -> list[str]:
     quarter_labels = _metal_quarter_labels(trends)
+    year_label = _metal_prev_year_label(trends)
     headers = ["항목", "최신값", "전일대비", "전일대비(%)", "당월평균대비"]
     headers += [f"{lbl} 평균대비" for lbl in quarter_labels]
+    headers.append(f"{year_label} 평균대비")
     headers.append("추세")
     lines = ["| " + " | ".join(headers) + " |", "|" + "---|" * len(headers)]
     for key, t in trends.items():
         label = METAL_LABELS.get(key, key)
+        if key in _FOCUS_METALS:
+            label = f"**{label}**"
         cells = [
             label,
             _fmt(t["latest"]),
@@ -61,6 +74,7 @@ def _metal_table_rows(trends: dict) -> list[str]:
             _fmt_pct(t["vs_month_avg_pct"]),
         ]
         cells += [_fmt_pct(q["vs_pct"]) for q in t.get("quarters", [])]
+        cells.append(_fmt_pct(t.get("vs_year_avg_pct")))
         cells.append(t["label"])
         lines.append("| " + " | ".join(cells) + " |")
     return lines
@@ -90,7 +104,7 @@ def render_markdown(result: FxMetalReport) -> str:
         "",
         *build_fx_narrative(result.fx_trends),
         "",
-        "## 비철금속 (LME 시세, US$/톤, 당월/당분기 평균 대비)",
+        "## 비철금속 (LME 시세, US$/톤, 당월/당분기/전년 평균 대비, 구리·알루미늄 중점)",
         "",
         *_metal_table_rows(result.metal_trends),
         "",
@@ -121,13 +135,18 @@ _PILL_COLORS = {
     "보합": ("#8B8377", "#ECE8E0"),
     "판정불가": ("#8B8377", "#ECE8E0"),
 }
-_TD_STYLE = f"padding:9px 12px;border-bottom:1px solid {_BORDER};text-align:right;font-size:12.8px;color:{_INK};"
+_TD_STYLE = (
+    f"padding:9px 12px;border-bottom:1px solid {_BORDER};text-align:right;"
+    f"font-size:12.8px;color:{_INK};white-space:nowrap;"
+)
 _TD_LABEL_STYLE = _TD_STYLE + "text-align:left;font-weight:600;"
 _TH_STYLE = (
     f"padding:9px 12px;background:{_ACCENT_SOFT};color:{_ACCENT};font-weight:600;"
     "font-size:11.5px;text-align:right;white-space:nowrap;"
 )
 _TH_LABEL_STYLE = _TH_STYLE + "text-align:left;"
+_FOCUS_BG = "#FBEDC7"
+_FOCUS_LABEL_COLOR = "#8A5A12"
 
 
 def _pill_html(label: str) -> str:
@@ -139,11 +158,14 @@ def _pill_html(label: str) -> str:
 
 
 def _table_wrapper(header_row: str, body_rows: str) -> str:
-    return (
+    table = (
         f'<table cellpadding="0" cellspacing="0" border="0" '
         f'style="border-collapse:collapse;width:100%;border:1px solid {_BORDER};border-radius:6px;">'
         f"<thead><tr>{header_row}</tr></thead><tbody>{body_rows}</tbody></table>"
     )
+    # 컬럼이 많아 폭이 좁아지면 라벨 열이 글자 단위로 세로 줄바꿈되는 걸 막기 위해
+    # 셀은 nowrap으로 고정하고, 넘치는 폭은 가로 스크롤로 처리한다.
+    return f'<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">{table}</div>'
 
 
 def _fx_table_html(trends: dict) -> str:
@@ -172,26 +194,35 @@ def _fx_table_html(trends: dict) -> str:
 
 def _metal_table_html(trends: dict) -> str:
     quarter_labels = _metal_quarter_labels(trends)
+    year_label = _metal_prev_year_label(trends)
     rows = []
     for key, t in trends.items():
         label = METAL_LABELS.get(key, key)
+        focus = key in _FOCUS_METALS
+        td_style = _TD_STYLE + (f"background:{_FOCUS_BG};" if focus else "")
+        label_style = _TD_LABEL_STYLE + (
+            f"background:{_FOCUS_BG};color:{_FOCUS_LABEL_COLOR};" if focus else ""
+        )
+        label_text = f"★ {label}" if focus else label
         cells = (
-            f'<td style="{_TD_LABEL_STYLE}">{label}</td>'
-            f'<td style="{_TD_STYLE}">{_fmt(t["latest"])}</td>'
-            f'<td style="{_TD_STYLE}">{_fmt(t["change_1d"])}</td>'
-            f'<td style="{_TD_STYLE}">{_fmt_pct(t["change_1d_pct"])}</td>'
-            f'<td style="{_TD_STYLE}">{_fmt_pct(t["vs_month_avg_pct"])}</td>'
+            f'<td style="{label_style}">{label_text}</td>'
+            f'<td style="{td_style}">{_fmt(t["latest"])}</td>'
+            f'<td style="{td_style}">{_fmt(t["change_1d"])}</td>'
+            f'<td style="{td_style}">{_fmt_pct(t["change_1d_pct"])}</td>'
+            f'<td style="{td_style}">{_fmt_pct(t["vs_month_avg_pct"])}</td>'
         )
         cells += "".join(
-            f'<td style="{_TD_STYLE}">{_fmt_pct(q["vs_pct"])}</td>' for q in t.get("quarters", [])
+            f'<td style="{td_style}">{_fmt_pct(q["vs_pct"])}</td>' for q in t.get("quarters", [])
         )
-        cells += f'<td style="{_TD_STYLE}">{_pill_html(t["label"])}</td>'
+        cells += f'<td style="{td_style}">{_fmt_pct(t.get("vs_year_avg_pct"))}</td>'
+        cells += f'<td style="{td_style}">{_pill_html(t["label"])}</td>'
         rows.append(f"<tr>{cells}</tr>")
     header_cells = "".join(f'<th style="{_TH_STYLE}">{lbl} 평균대비</th>' for lbl in quarter_labels)
     header = (
         f'<th style="{_TH_LABEL_STYLE}">항목</th><th style="{_TH_STYLE}">최신값</th>'
         f'<th style="{_TH_STYLE}">전일대비</th><th style="{_TH_STYLE}">전일대비(%)</th>'
-        f'<th style="{_TH_STYLE}">당월평균대비</th>{header_cells}<th style="{_TH_STYLE}">추세</th>'
+        f'<th style="{_TH_STYLE}">당월평균대비</th>{header_cells}'
+        f'<th style="{_TH_STYLE}">{year_label} 평균대비</th><th style="{_TH_STYLE}">추세</th>'
     )
     return _table_wrapper(header, "".join(rows))
 
@@ -277,7 +308,7 @@ def render_email_html(
       {_narrative_html(build_fx_narrative(result.fx_trends))}
       {fx_chart_html}
 
-      <h2 style="{section_title_style}">비철금속 (LME 시세, US$/톤)</h2>
+      <h2 style="{section_title_style}">비철금속 (LME 시세, US$/톤, 구리·알루미늄 중점 ★)</h2>
       {_metal_table_html(result.metal_trends)}
       {_narrative_html(build_metal_narrative(result.metal_trends))}
       {metal_chart_html}

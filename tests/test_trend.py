@@ -54,6 +54,19 @@ def test_classify_metal_trend_rising_above_month_and_quarter_avg():
     assert result["latest"] == 110.0
     assert result["change_1d"] == 6.0
     assert result["quarters"][0]["label"] == "2026Q3 (당분기)"
+    # 데이터에 전년(2025) 값이 없으므로 전년 평균은 계산 불가
+    assert result["prev_year"] == 2025
+    assert result["year_avg"] is None
+    assert result["vs_year_avg_pct"] is None
+
+
+def test_classify_metal_trend_computes_prev_year_average():
+    dates = pd.to_datetime(["2025-03-01", "2025-06-01", "2025-09-01", "2026-07-06"])
+    values = pd.Series([90.0, 100.0, 110.0, 120.0])
+    result = classify_metal_trend(dates, values)
+    assert result["prev_year"] == 2025
+    assert result["year_avg"] == pytest.approx((90.0 + 100.0 + 110.0) / 3)
+    assert result["vs_year_avg_pct"] == pytest.approx((120.0 - 100.0) / 100.0 * 100)
 
 
 def test_classify_metal_trend_falling_below_month_and_quarter_avg():
@@ -107,3 +120,4 @@ def test_classify_metal_trend_insufficient_data():
     assert result["change_1d"] is None
     assert result["month_avg"] is None
     assert result["quarters"] == []
+    assert result["vs_year_avg_pct"] is None
